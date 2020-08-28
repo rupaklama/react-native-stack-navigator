@@ -1,35 +1,47 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
 import { SearchBar } from '../components/SearchBar';
+import { ResultsList } from '../components/ResultsList';
+import useResults from '../hooks/useResults';
 
-import yelp from '../api/yelp';
 export const SearchScreen = () => {
   const [term, setTerm] = useState('');
-  const [results, setResults] = useState([]);
 
-  // error handling
+  // from useResults hook
+  const [searchApi, results, errorMessage] = useResults();
 
-  const searchApi = async () => {
-    try {
-      const response = await yelp.get('/search', {
-        params: {
-          limit: 50,
-          term: term,
-          location: 'santa rosa',
-        },
-      });
-      setResults(response.data.businesses);
-    } catch (error) {
-      console.log(error);
-    }
+  // grouping results
+  const filterResultsByPrice = price => {
+    // price === '$' || '$$' || '$$$'
+    return results.filter(result => {
+      return result.price === price;
+    });
   };
 
   return (
     <View>
-      <SearchBar term={term} onTermChange={setTerm} onTermSubmit={searchApi} />
+      <SearchBar
+        term={term}
+        onTermChange={setTerm}
+        onTermSubmit={() => searchApi(term)}
+      />
       <Text>We have found {results.length} results!</Text>
-    </View>
+      {errorMessage ? <Text>{errorMessage}</Text> : null}
+
+      
+      <ScrollView>
+        <ResultsList
+          results={filterResultsByPrice('$')}
+          title="Cost effective"
+        />
+        <ResultsList results={filterResultsByPrice('$$')} title="Bit Pricier" />
+        <ResultsList
+          results={filterResultsByPrice('$$$')}
+          title="Big Spender"
+        />
+      </ScrollView>
+    </View> // Scroll view is to scroll up/down to see any hidden content
   );
 };
 
