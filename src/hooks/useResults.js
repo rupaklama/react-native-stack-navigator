@@ -26,7 +26,7 @@ export default () => {
   useEffect(() => {
     const abortController = new AbortController();
     
-    searchApi('pasta');
+    searchApi('beer');
 
     return () => {
       abortController.abort();

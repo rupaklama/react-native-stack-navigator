@@ -2,12 +2,14 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
 import { SearchScreen } from './src/screens/SearchScreen';
+import { ResultsShowScreen } from './src/screens/ResultsShowScreen';
 
 // creating Stack navigator object to create routes
 const navigator = createStackNavigator(
   {
     // when using Stack navigator, at least need to have one screen
     Search: SearchScreen,
+    ResultsShow: ResultsShowScreen
   },
   // as second arg, passing another object
   {
